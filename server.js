@@ -8,9 +8,6 @@ var bodyParser = require('body-parser');
 mongoose.connect('mongodb://mclexr:mongolabMaster@ds035014.mongolab.com:35014/blog');
 app.set('secretKey', "Familia#Amigos@Master!");
 
-var User = require('./app/models/user');
-
-
 app.use(bodyParser.urlencoded({
     extended: true
 }));
