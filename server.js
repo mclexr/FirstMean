@@ -4,6 +4,7 @@
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
 
 mongoose.connect('mongodb://mclexr:mongolabMaster@ds035014.mongolab.com:35014/blog');
 app.set('secretKey', "Familia#Amigos@Master!");
