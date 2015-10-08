@@ -1,0 +1,27 @@
+{
+    "name": "firstmean",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "dependencies": {
+        "express": "~4.5.1",
+        "mongoose": "~3.8.0",
+        "body-parser": "~1.4.2"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mclexr/FirstMean.git"
+    },
+    "keywords": [
+    "mean"
+  ],
+    "author": "Michael Fidelis",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/mclexr/FirstMean/issues"
+    },
+    "homepage": "https://github.com/mclexr/FirstMean#readme"
+}
