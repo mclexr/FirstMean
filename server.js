@@ -7,9 +7,11 @@
 var express = require('express'); // call express
 var app = express(); // define our app using express
 var bodyParser = require('body-parser');
+var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://mclexr:mongolabMaster@ds035014.mongolab.com:35014/blog');
+app.set('secretKey', "Familia#Amigos@Master!"); // secret variable
 
 var User = require('./app/models/user');
 
@@ -29,15 +31,79 @@ var router = express.Router(); // get an instance of the express Router
 
 // REGISTER OUR ROUTES -------------------------------
 
-router.use(function (req, res, next) {
-    // do logging
-    console.log('Requisição realizada');
-    next();
+router.post('/auth', function (req, res) {
+
+    // find the user
+    User.findOne({
+        email: req.body.email
+    }, function (err, user) {
+
+        if (err) throw err;
+
+        if (!user) {
+            res.status(401).json({
+                message: 'Authentication failed. User not found.'
+            });
+        } else if (user) {
+
+            if (user.password != req.body.password) {
+                res.status(401).json({
+                    message: 'Authentication failed. Wrong password.'
+                });
+            } else {
+
+                var token = jwt.sign({
+                    user: user.name,
+                    email: user.email
+                }, app.get('secretKey'), {
+                    expiresIn: 3600
+                });
+
+                // return the information including token as JSON
+                res.status(200).json({
+                    token: token
+                });
+            }
+
+        }
+
+    });
 });
+
+
+router.use(function (req, res, next) {
+
+    // check header or url parameters or post parameters for token
+    var token = req.body.token || req.query.token || req.headers['x-access-token'] || req.headers['authorization'] || req.headers['Authorization'];
+
+    // decode token
+    if (token) {
+
+        // verifies secret and checks exp
+        jwt.verify(token, app.get('secretKey'), function (err, decoded) {
+            if (err) {
+                return res.status(401).json({
+                    message: 'Failed to authenticate token.'
+                });
+            } else {
+                // if everything is good, save to request for use in other routes
+                req.decoded = decoded;
+                next();
+            }
+        });
+
+    } else {
+        return res.status(401).send({
+            message: 'No token provided.'
+        });
+
+    }
+});
+
 
 router.get('/', function (req, res) {
     res.json({
-        message: 'Bem vindo a api!'
+        message: 'Wellcome!'
     });
 });
 
@@ -106,7 +172,6 @@ router.route('/users/:userId')
             });
         });
     });
-
 
 app.use('/api', router);
 
